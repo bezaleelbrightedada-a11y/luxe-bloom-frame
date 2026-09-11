@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 
+/** Visual + label mapping for every supported entity status. */
 const STATUS_STYLES = {
   draft: { label: "Draft", className: "bg-muted text-muted-foreground" },
   in_progress: { label: "In progress", className: "bg-primary/12 text-primary" },
@@ -13,18 +14,25 @@ const STATUS_STYLES = {
   failed: { label: "Failed", className: "bg-destructive/12 text-destructive" },
 };
 
-export function StatusBadge({ status }) {
-  const meta = STATUS_STYLES[status] ?? STATUS_STYLES.draft;
+const DEFAULT_STATUS = "draft";
+
+/**
+ * Small pill describing a project or render status.
+ * @param {{ status: keyof typeof STATUS_STYLES, className?: string }} props
+ */
+export function StatusBadge({ status, className }) {
+  const meta = STATUS_STYLES[status] ?? STATUS_STYLES[DEFAULT_STATUS];
 
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
         meta.className,
+        className,
       )}
     >
       {status === "rendering" ? (
-        <span className="size-1.5 animate-pulse rounded-full bg-current" />
+        <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-current" />
       ) : null}
       {meta.label}
     </span>
