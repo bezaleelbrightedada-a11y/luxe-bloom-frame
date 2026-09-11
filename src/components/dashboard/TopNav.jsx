@@ -1,6 +1,8 @@
 import { Bell, Menu, Plus, Search } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import { ActionButton } from "@/components/common/ActionButton";
+
 
 /**
  * Sticky application header: mobile menu, search, and account controls.
