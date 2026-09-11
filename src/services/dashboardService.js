@@ -7,13 +7,7 @@
  *   export const getRecentProjects = () => api.get("/projects?limit=4");
  */
 
-import {
-  aiUsage,
-  currentUser,
-  recentProjects,
-  renderQueue,
-  storage,
-} from "@/data/dashboard";
+import { aiUsage, currentUser, recentProjects, renderQueue, storage } from "@/data/dashboard";
 
 const resolve = (value) => Promise.resolve(value);
 
