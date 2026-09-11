@@ -1,16 +1,23 @@
+import { memo } from "react";
 import { Pause, RotateCcw, Server } from "lucide-react";
 
+import { ActionButton } from "@/components/common/ActionButton";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Surface, SurfaceHeader } from "@/components/common/Surface";
+import { SECTION_DELAYS } from "@/constants/dashboard";
+import { pluralize } from "@/utils/format";
 
-function eta(job) {
+const PENDING_STATUSES = ["rendering", "queued"];
+
+/** @param {{ status: string, etaMinutes?: number }} job */
+function formatEta(job) {
   if (job.status === "completed") return "Done";
   if (job.status === "failed") return "Stopped";
   return `~${job.etaMinutes} min left`;
 }
 
-function QueueRow({ job, index }) {
+const QueueRow = memo(function QueueRow({ job, index, onToggle }) {
   const isActive = job.status === "rendering";
 
   return (
@@ -39,10 +46,11 @@ function QueueRow({ job, index }) {
           {job.node}
         </span>
         <span className="inline-flex items-center gap-2">
-          {eta(job)}
+          {formatEta(job)}
           <button
             type="button"
-            aria-label={isActive ? "Pause render" : "Retry render"}
+            onClick={() => onToggle?.(job)}
+            aria-label={`${isActive ? "Pause" : "Retry"} render for ${job.projectName}`}
             className="press grid size-7 place-items-center rounded-lg border border-border/70 bg-card text-foreground"
           >
             {isActive ? <Pause className="size-3.5" /> : <RotateCcw className="size-3.5" />}
@@ -51,28 +59,29 @@ function QueueRow({ job, index }) {
       </div>
     </li>
   );
-}
+});
 
-export function RenderingQueue({ jobs }) {
-  const active = jobs.filter((job) => job.status === "rendering" || job.status === "queued").length;
+/**
+ * Live render queue list.
+ * @param {{ jobs?: object[], onToggleJob?: (job: object) => void, onManage?: () => void }} props
+ */
+export function RenderingQueue({ jobs = [], onToggleJob, onManage }) {
+  const pending = jobs.filter((job) => PENDING_STATUSES.includes(job.status)).length;
 
   return (
-    <Surface delay={120}>
+    <Surface delay={SECTION_DELAYS.renderingQueue}>
       <SurfaceHeader
         title="Rendering queue"
-        subtitle={`${active} job${active === 1 ? "" : "s"} pending`}
+        subtitle={`${pending} ${pluralize(pending, "job")} pending`}
         action={
-          <button
-            type="button"
-            className="press rounded-lg px-2.5 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
-          >
+          <ActionButton variant="ghost" onClick={onManage}>
             Manage
-          </button>
+          </ActionButton>
         }
       />
       <ul className="space-y-2.5 p-4 sm:p-5">
         {jobs.map((job, index) => (
-          <QueueRow key={job.id} job={job} index={index} />
+          <QueueRow key={job.id} job={job} index={index} onToggle={onToggleJob} />
         ))}
       </ul>
     </Surface>
