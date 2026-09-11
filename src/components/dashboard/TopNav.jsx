@@ -64,7 +64,6 @@ export function TopNav({
             New project
           </ActionButton>
 
-
           <button
             type="button"
             onClick={toggleTheme}
@@ -74,18 +73,8 @@ export function TopNav({
             {theme === "dark" ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
           </button>
 
-          <button
-            type="button"
-            onClick={onOpenNotifications}
-            aria-label="Notifications"
-            className="press relative grid size-9 place-items-center rounded-xl border border-border/70 bg-card"
-          >
-            <Bell className="size-[18px]" />
-            <span
-              aria-hidden="true"
-              className="absolute right-2 top-2 size-2 rounded-full bg-primary ring-2 ring-card"
-            />
-          </button>
+          <NotificationsMenu />
+
 
           <button
             type="button"
