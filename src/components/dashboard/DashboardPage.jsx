@@ -43,7 +43,12 @@ export function DashboardPage() {
 
         <div className="grid gap-5 xl:grid-cols-3">
           <div className="space-y-5 xl:col-span-2">
-            {projects.data ? <RecentProjects projects={projects.data} /> : <Skeleton className="h-80" />}
+            <RecentProjects
+              projects={projects.data ?? []}
+              isLoading={projects.isLoading}
+              error={projects.error}
+              onRetry={() => projects.refetch()}
+            />
             {queue.data ? <RenderingQueue jobs={queue.data} /> : <Skeleton className="h-80" />}
           </div>
 
