@@ -1,7 +1,8 @@
-import { Bell, Menu, Plus, Search } from "lucide-react";
+import { Bell, Menu, Moon, Plus, Search, Sun } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { ActionButton } from "@/components/common/ActionButton";
+import { useTheme } from "@/hooks/useTheme";
 
 
 /**
