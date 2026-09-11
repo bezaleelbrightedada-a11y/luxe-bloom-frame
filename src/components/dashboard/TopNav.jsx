@@ -24,6 +24,8 @@ export function TopNav({
   onOpenNotifications,
   onOpenProfile,
 }) {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/75 backdrop-blur-xl">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
