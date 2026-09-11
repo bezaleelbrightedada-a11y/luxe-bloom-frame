@@ -1,5 +1,6 @@
 import { ActionButton } from "@/components/common/ActionButton";
 import { Skeleton } from "@/components/common/Skeleton";
+import { Surface } from "@/components/common/Surface";
 import { AiUsageCard } from "@/components/dashboard/AiUsageCard";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -10,28 +11,21 @@ import { WelcomeSection } from "@/components/dashboard/WelcomeSection";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 
-function DashboardBootSkeleton() {
-  return (
-    <div className="min-h-screen space-y-4 bg-background p-6">
-      <Skeleton className="h-16" />
-      <Skeleton className="h-48" />
-      <Skeleton className="h-72" />
-    </div>
-  );
-}
+/** Inline placeholder used when a section has no data yet. */
+function SectionPlaceholder({ title, query, height = "h-72", children }) {
+  if (query.isLoading) return <Skeleton className={height} />;
+  if (query.data) return children;
 
-function DashboardErrorState({ onRetry }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6 text-center">
-      <h1 className="text-2xl font-semibold text-foreground">Dashboard unavailable</h1>
-      <p className="mt-2 max-w-md text-sm text-muted-foreground">
-        We could not load your profile. Make sure VITE_API_BASE_URL is configured and the API is
-        reachable.
+    <Surface className="p-5 sm:p-6">
+      <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        No data yet. Connect the API to see this section.
       </p>
-      <ActionButton onClick={onRetry} className="mt-6 py-2 font-medium transition">
+      <ActionButton variant="outline" onClick={query.refetch} className="mt-4">
         Retry
       </ActionButton>
-    </div>
+    </Surface>
   );
 }
 
@@ -39,9 +33,6 @@ export function DashboardPage() {
   const { user, projects, queue, usage, storage, all } = useDashboardData();
 
   useDashboardNotifications(all);
-
-  if (user.isLoading && !user.data) return <DashboardBootSkeleton />;
-  if (user.isError) return <DashboardErrorState onRetry={user.refetch} />;
 
   return (
     <DashboardLayout user={user.data}>
@@ -56,13 +47,19 @@ export function DashboardPage() {
               error={projects.error}
               onRetry={projects.refetch}
             />
-            {queue.data ? <RenderingQueue jobs={queue.data} /> : <Skeleton className="h-80" />}
+            <SectionPlaceholder title="Rendering queue" query={queue} height="h-80">
+              <RenderingQueue jobs={queue.data ?? []} />
+            </SectionPlaceholder>
           </div>
 
           <div className="space-y-5">
             <QuickActions />
-            {usage.data ? <AiUsageCard usage={usage.data} /> : <Skeleton className="h-72" />}
-            {storage.data ? <StorageCard storage={storage.data} /> : <Skeleton className="h-72" />}
+            <SectionPlaceholder title="AI usage" query={usage}>
+              {usage.data ? <AiUsageCard usage={usage.data} /> : null}
+            </SectionPlaceholder>
+            <SectionPlaceholder title="Storage" query={storage}>
+              {storage.data ? <StorageCard storage={storage.data} /> : null}
+            </SectionPlaceholder>
           </div>
         </div>
       </div>

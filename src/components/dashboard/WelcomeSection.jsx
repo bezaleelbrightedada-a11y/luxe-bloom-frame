@@ -16,7 +16,7 @@ export function WelcomeSection({ user, onPrimaryAction }) {
         <div>
           <p className="text-sm text-muted-foreground">{getGreeting()}</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-            {user?.firstName}, your studio is running smoothly.
+            {user?.firstName ?? "Welcome back"}, your studio is running smoothly.
           </h1>
           <p className="mt-2 max-w-xl text-sm text-muted-foreground">
             Two renders are in flight and one project is waiting on your review.
