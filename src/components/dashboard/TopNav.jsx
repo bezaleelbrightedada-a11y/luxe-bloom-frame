@@ -46,9 +46,9 @@ export function TopNav({ user, onOpenSidebar }) {
             className="press flex items-center gap-2 rounded-xl border border-border/70 bg-card py-1.5 pl-1.5 pr-3"
           >
             <span className="grid size-7 place-items-center rounded-lg bg-primary/12 text-xs font-semibold text-primary">
-              {user.avatarInitials}
+              {user?.avatarInitials ?? "?"}
             </span>
-            <span className="hidden text-sm font-medium md:inline">{user.fullName}</span>
+            <span className="hidden text-sm font-medium md:inline">{user?.fullName ?? "Guest"}</span>
           </button>
         </div>
       </div>
