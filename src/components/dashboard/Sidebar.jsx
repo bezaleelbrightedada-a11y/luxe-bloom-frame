@@ -110,7 +110,7 @@ export function Sidebar({ open, onClose, onNavigate }) {
         aria-modal="true"
         aria-label="Navigation"
         aria-hidden={!open}
-        inert={open ? undefined : ""}
+        inert={!open}
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-[268px] border-r border-border/70 bg-sidebar transition-transform duration-400 ease-[cubic-bezier(0.32,0.72,0,1)] lg:hidden",
           open ? "translate-x-0" : "-translate-x-full",
