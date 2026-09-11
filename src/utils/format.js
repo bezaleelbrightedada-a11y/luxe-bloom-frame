@@ -38,8 +38,19 @@ export function formatShortDate(value) {
  * @returns {number} whole-number percentage
  */
 export function toPercent(used, total) {
-  if (!total || Number.isNaN(used) || Number.isNaN(total)) return 0;
-  return clampPercent(Math.round((used / total) * 100));
+  return Math.round(percentOf(used, total));
+}
+
+/**
+ * Exact (unrounded) percentage of `used` against `total`, clamped to 0-100.
+ * Use when sub-pixel accuracy matters, e.g. segmented bar widths.
+ * @param {number} used
+ * @param {number} total
+ * @returns {number}
+ */
+export function percentOf(used, total) {
+  if (!total || Number.isNaN(Number(used)) || Number.isNaN(Number(total))) return 0;
+  return clampPercent((used / total) * 100);
 }
 
 /**

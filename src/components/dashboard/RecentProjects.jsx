@@ -1,24 +1,18 @@
-import { ChevronRight, Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 
+import { ActionButton } from "@/components/common/ActionButton";
 import { DataTable } from "@/components/common/DataTable";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Surface, SurfaceHeader } from "@/components/common/Surface";
-
-function relativeTime(iso) {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const hours = Math.round(diffMs / 3_600_000);
-  if (hours < 1) return "just now";
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.round(hours / 24);
-  return `${days}d ago`;
-}
+import { SECTION_DELAYS } from "@/constants/dashboard";
+import { formatRelativeTime } from "@/utils/format";
 
 /**
- * Column definitions are declared outside the component so they are stable
- * across renders and easy to reuse or extend.
+ * Column definitions live outside the component so their identity is stable
+ * across renders (avoids re-sorting / re-rendering the table body).
  */
-const columns = [
+const PROJECT_COLUMNS = [
   {
     key: "name",
     title: "Project",
@@ -27,7 +21,7 @@ const columns = [
         <div
           className={`grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br sm:size-12 ${project.thumbnailTone}`}
         >
-          <ImageIcon className="size-4 text-foreground/50 sm:size-5" />
+          <ImageIcon className="size-4 text-foreground/50 sm:size-5" aria-hidden="true" />
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -69,50 +63,62 @@ const columns = [
     sortable: true,
     headerClassName: "hidden md:table-cell",
     cellClassName: "hidden md:table-cell whitespace-nowrap",
-    render: (project) => <span className="text-xs text-muted-foreground">{relativeTime(project.updatedAt)}</span>,
+    render: (project) => (
+      <span className="text-xs text-muted-foreground">{formatRelativeTime(project.updatedAt)}</span>
+    ),
   },
 ];
 
-export function RecentProjects({ projects, isLoading = false, error = null, onRetry }) {
+const projectKey = (project) => project.id;
+
+/**
+ * Recent projects table with loading, empty and error states.
+ *
+ * @param {Object} props
+ * @param {object[]} [props.projects]
+ * @param {boolean} [props.isLoading]
+ * @param {Error|null} [props.error]
+ * @param {() => void} [props.onRetry]
+ * @param {(project: object) => void} [props.onSelectProject]
+ * @param {() => void} [props.onCreateProject]
+ * @param {() => void} [props.onViewAll]
+ */
+export function RecentProjects({
+  projects = [],
+  isLoading = false,
+  error = null,
+  onRetry,
+  onSelectProject,
+  onCreateProject,
+  onViewAll,
+}) {
   return (
-    <Surface delay={80}>
+    <Surface delay={SECTION_DELAYS.recentProjects}>
       <SurfaceHeader
         title="Recent projects"
         subtitle="Your latest scenes and their progress"
         action={
-          <button
-            type="button"
-            className="press rounded-lg px-2.5 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
-          >
+          <ActionButton variant="ghost" onClick={onViewAll}>
             View all
-          </button>
+          </ActionButton>
         }
       />
       <div className="p-2 sm:p-3">
         <DataTable
-          columns={columns}
+          columns={PROJECT_COLUMNS}
           data={projects}
-          keyExtractor={(project) => project.id}
+          keyExtractor={projectKey}
           isLoading={isLoading}
           error={error}
           sortable
-          onRowClick={(project) => {
-            // Future: navigate to project detail page.
-            // eslint-disable-next-line no-console
-            console.log("Open project:", project.id);
-          }}
+          onRowClick={onSelectProject}
           onRetry={onRetry}
           rowClassName="press"
           emptyState={{
             icon: ImageIcon,
             title: "No projects yet",
             description: "Create your first render project to see it here.",
-            action: {
-              label: "New project",
-              onClick: () => {
-                // Future: open new-project modal or navigate to /projects/new.
-              },
-            },
+            action: { label: "New project", onClick: onCreateProject },
           }}
           ariaLabel="Recent projects"
         />

@@ -3,7 +3,7 @@ import { HardDrive } from "lucide-react";
 import { ActionButton } from "@/components/common/ActionButton";
 import { Surface, SurfaceHeader } from "@/components/common/Surface";
 import { SECTION_DELAYS } from "@/constants/dashboard";
-import { toPercent } from "@/utils/format";
+import { percentOf, toPercent } from "@/utils/format";
 
 /**
  * Storage consumption with a segmented usage bar.
@@ -34,7 +34,7 @@ export function StorageCard({ storage, onManage }) {
           {breakdown.map((segment) => (
             <div
               key={segment.label}
-              style={{ width: `${toPercent(segment.value, storage.totalGb)}%` }}
+              style={{ width: `${percentOf(segment.value, storage.totalGb)}%` }}
               className={`h-full transition-[width] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${segment.tone}`}
             />
           ))}
