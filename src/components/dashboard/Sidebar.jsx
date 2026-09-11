@@ -68,11 +68,15 @@ function SidebarContent({ onClose, onNavigate }) {
         <p className="mt-1 text-xs text-muted-foreground">
           Scale rendering capacity instantly for deadline weeks.
         </p>
-        <ActionButton asChild className="mt-3 w-full justify-center rounded-lg px-3 py-2 text-xs">
-          <Link to="/settings" onClick={onNavigate}>
-            Upgrade plan
-          </Link>
+        <ActionButton
+          as={Link}
+          to="/settings"
+          onClick={onNavigate}
+          className="mt-3 w-full justify-center rounded-lg px-3 py-2 text-xs"
+        >
+          Upgrade plan
         </ActionButton>
+
       </div>
     </div>
   );
