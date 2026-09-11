@@ -48,9 +48,21 @@ export const NAV_SECTIONS = [
 
 /** Quick action tiles. Each one navigates to the relevant workspace area. */
 export const QUICK_ACTIONS = [
-  { id: "new-project", label: "New project", hint: "Start a scene", icon: FolderPlus, to: "/projects" },
+  {
+    id: "new-project",
+    label: "New project",
+    hint: "Start a scene",
+    icon: FolderPlus,
+    to: "/projects",
+  },
   { id: "upload", label: "Upload assets", hint: "Models & textures", icon: Upload, to: "/assets" },
-  { id: "ai-scene", label: "AI studio", hint: "Prompt to render", icon: Sparkles, to: "/ai-studio" },
+  {
+    id: "ai-scene",
+    label: "AI studio",
+    hint: "Prompt to render",
+    icon: Sparkles,
+    to: "/ai-studio",
+  },
   { id: "enhance", label: "Render queue", hint: "Track renders", icon: Wand2, to: "/renders" },
 ];
 
