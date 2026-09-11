@@ -1,20 +1,16 @@
-import { FolderPlus, Sparkles, Upload, Wand2 } from "lucide-react";
-
 import { Surface, SurfaceHeader } from "@/components/common/Surface";
+import { QUICK_ACTIONS, SECTION_DELAYS } from "@/constants/dashboard";
 
-const ACTIONS = [
-  { id: "new-project", label: "New project", hint: "Start a scene", icon: FolderPlus },
-  { id: "upload", label: "Upload assets", hint: "Models & textures", icon: Upload },
-  { id: "ai-scene", label: "AI scene", hint: "Prompt to render", icon: Sparkles },
-  { id: "enhance", label: "Enhance", hint: "Upscale & denoise", icon: Wand2 },
-];
-
-export function QuickActions({ onAction }) {
+/**
+ * Grid of shortcut tiles.
+ * @param {{ actions?: typeof QUICK_ACTIONS, onAction?: (id: string) => void }} props
+ */
+export function QuickActions({ actions = QUICK_ACTIONS, onAction }) {
   return (
-    <Surface delay={160}>
+    <Surface delay={SECTION_DELAYS.quickActions}>
       <SurfaceHeader title="Quick actions" subtitle="Jump straight into the work" />
       <div className="grid grid-cols-2 gap-3 p-4 sm:p-5">
-        {ACTIONS.map((action, index) => {
+        {actions.map((action, index) => {
           const Icon = action.icon;
           return (
             <button

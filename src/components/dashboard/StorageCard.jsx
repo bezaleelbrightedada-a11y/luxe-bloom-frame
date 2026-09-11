@@ -1,12 +1,20 @@
 import { HardDrive } from "lucide-react";
 
+import { ActionButton } from "@/components/common/ActionButton";
 import { Surface, SurfaceHeader } from "@/components/common/Surface";
+import { SECTION_DELAYS } from "@/constants/dashboard";
+import { toPercent } from "@/utils/format";
 
-export function StorageCard({ storage }) {
-  const percent = Math.round((storage.usedGb / storage.totalGb) * 100);
+/**
+ * Storage consumption with a segmented usage bar.
+ * @param {{ storage: { usedGb: number, totalGb: number, breakdown: Array<{label: string, value: number, tone: string}> }, onManage?: () => void }} props
+ */
+export function StorageCard({ storage, onManage }) {
+  const percent = toPercent(storage.usedGb, storage.totalGb);
+  const breakdown = storage.breakdown ?? [];
 
   return (
-    <Surface delay={240}>
+    <Surface delay={SECTION_DELAYS.storage}>
       <SurfaceHeader
         title="Storage"
         subtitle={`${storage.totalGb} GB plan`}
@@ -23,17 +31,17 @@ export function StorageCard({ storage }) {
         </div>
 
         <div className="mt-3 flex h-2.5 w-full overflow-hidden rounded-full bg-muted">
-          {storage.breakdown.map((segment) => (
+          {breakdown.map((segment) => (
             <div
               key={segment.label}
-              style={{ width: `${(segment.value / storage.totalGb) * 100}%` }}
+              style={{ width: `${toPercent(segment.value, storage.totalGb)}%` }}
               className={`h-full transition-[width] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${segment.tone}`}
             />
           ))}
         </div>
 
         <ul className="mt-4 space-y-2.5">
-          {storage.breakdown.map((segment) => (
+          {breakdown.map((segment) => (
             <li key={segment.label} className="flex items-center justify-between text-sm">
               <span className="inline-flex items-center gap-2 text-muted-foreground">
                 <span className={`size-2 rounded-full ${segment.tone}`} />
@@ -44,12 +52,13 @@ export function StorageCard({ storage }) {
           ))}
         </ul>
 
-        <button
-          type="button"
-          className="press mt-5 w-full rounded-xl border border-border/70 bg-card px-3 py-2.5 text-sm font-semibold"
+        <ActionButton
+          variant="outline"
+          onClick={onManage}
+          className="mt-5 w-full justify-center px-3"
         >
           Manage storage
-        </button>
+        </ActionButton>
       </div>
     </Surface>
   );

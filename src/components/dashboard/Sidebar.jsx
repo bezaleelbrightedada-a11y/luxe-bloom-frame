@@ -1,42 +1,17 @@
-import {
-  Boxes,
-  Clapperboard,
-  Cog,
-  LayoutDashboard,
-  LifeBuoy,
-  Layers,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { memo } from "react";
+import { Sparkles, X } from "lucide-react";
 
+import { ActionButton } from "@/components/common/ActionButton";
+import { NAV_SECTIONS } from "@/constants/dashboard";
 import { cn } from "@/lib/utils";
 
-const NAV_SECTIONS = [
-  {
-    label: "Workspace",
-    items: [
-      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
-      { id: "projects", label: "Projects", icon: Layers },
-      { id: "renders", label: "Render queue", icon: Clapperboard, badge: "2" },
-      { id: "assets", label: "Asset library", icon: Boxes },
-    ],
-  },
-  {
-    label: "Intelligence",
-    items: [
-      { id: "ai", label: "AI studio", icon: Sparkles },
-      { id: "settings", label: "Settings", icon: Cog },
-      { id: "support", label: "Support", icon: LifeBuoy },
-    ],
-  },
-];
-
-function NavItem({ item }) {
+const NavItem = memo(function NavItem({ item, onSelect }) {
   const Icon = item.icon;
 
   return (
     <button
       type="button"
+      onClick={() => onSelect?.(item.id)}
       aria-current={item.active ? "page" : undefined}
       className={cn(
         "press group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
@@ -54,9 +29,9 @@ function NavItem({ item }) {
       ) : null}
     </button>
   );
-}
+});
 
-function SidebarContent({ onNavigate }) {
+function SidebarContent({ onClose, onNavigate }) {
   return (
     <div className="flex h-full flex-col gap-6 px-4 py-5">
       <div className="flex items-center justify-between">
@@ -71,7 +46,7 @@ function SidebarContent({ onNavigate }) {
         </div>
         <button
           type="button"
-          onClick={onNavigate}
+          onClick={onClose}
           className="press grid size-8 place-items-center rounded-lg text-muted-foreground hover:bg-accent lg:hidden"
           aria-label="Close navigation"
         >
@@ -79,14 +54,14 @@ function SidebarContent({ onNavigate }) {
         </button>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-6 overflow-y-auto">
+      <nav aria-label="Main" className="flex flex-1 flex-col gap-6 overflow-y-auto">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label} className="space-y-1">
             <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
               {section.label}
             </p>
             {section.items.map((item) => (
-              <NavItem key={item.id} item={item} />
+              <NavItem key={item.id} item={item} onSelect={onNavigate} />
             ))}
           </div>
         ))}
@@ -97,28 +72,33 @@ function SidebarContent({ onNavigate }) {
         <p className="mt-1 text-xs text-muted-foreground">
           Scale rendering capacity instantly for deadline weeks.
         </p>
-        <button
-          type="button"
-          className="press mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
-        >
+        <ActionButton className="mt-3 w-full justify-center rounded-lg px-3 py-2 text-xs">
           Upgrade plan
-        </button>
+        </ActionButton>
       </div>
     </div>
   );
 }
 
-export function Sidebar({ open, onClose }) {
+/**
+ * Responsive navigation: static rail on desktop, overlay drawer on mobile.
+ *
+ * @param {{ open: boolean, onClose: () => void, onNavigate?: (id: string) => void }} props
+ */
+export function Sidebar({ open, onClose, onNavigate }) {
   return (
     <>
-      <aside className="hidden w-[268px] shrink-0 border-r border-border/70 bg-sidebar lg:block">
+      <aside
+        aria-label="Sidebar"
+        className="hidden w-[268px] shrink-0 border-r border-border/70 bg-sidebar lg:block"
+      >
         <div className="sticky top-0 h-screen">
-          <SidebarContent />
+          <SidebarContent onNavigate={onNavigate} />
         </div>
       </aside>
 
       <div
-        aria-hidden={!open}
+        aria-hidden="true"
         className={cn(
           "fixed inset-0 z-40 bg-foreground/25 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
           open ? "opacity-100" : "pointer-events-none opacity-0",
@@ -126,12 +106,17 @@ export function Sidebar({ open, onClose }) {
         onClick={onClose}
       />
       <aside
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation"
+        aria-hidden={!open}
+        inert={open ? undefined : ""}
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-[268px] border-r border-border/70 bg-sidebar transition-transform duration-400 ease-[cubic-bezier(0.32,0.72,0,1)] lg:hidden",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <SidebarContent onNavigate={onClose} />
+        <SidebarContent onClose={onClose} onNavigate={onNavigate} />
       </aside>
     </>
   );

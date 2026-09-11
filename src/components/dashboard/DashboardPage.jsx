@@ -1,7 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { toast } from "sonner";
-
+import { ActionButton } from "@/components/common/ActionButton";
+import { Skeleton } from "@/components/common/Skeleton";
 import { AiUsageCard } from "@/components/dashboard/AiUsageCard";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -9,78 +7,41 @@ import { RecentProjects } from "@/components/dashboard/RecentProjects";
 import { RenderingQueue } from "@/components/dashboard/RenderingQueue";
 import { StorageCard } from "@/components/dashboard/StorageCard";
 import { WelcomeSection } from "@/components/dashboard/WelcomeSection";
-import {
-  getAiUsage,
-  getCurrentUser,
-  getRecentProjects,
-  getRenderQueue,
-  getStorage,
-} from "@/services/dashboardService";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 
-function Skeleton({ className = "" }) {
-  return <div className={`animate-pulse rounded-2xl bg-muted ${className}`} />;
+function DashboardBootSkeleton() {
+  return (
+    <div className="min-h-screen space-y-4 bg-background p-6">
+      <Skeleton className="h-16" />
+      <Skeleton className="h-48" />
+      <Skeleton className="h-72" />
+    </div>
+  );
 }
 
-function buildQueryOptions(queryKey, queryFn) {
-  return {
-    queryKey,
-    queryFn,
-    retry: 2,
-    retryDelay: (attempt) => Math.min(attempt * 1_000, 3_000),
-  };
+function DashboardErrorState({ onRetry }) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6 text-center">
+      <h1 className="text-2xl font-semibold text-foreground">Dashboard unavailable</h1>
+      <p className="mt-2 max-w-md text-sm text-muted-foreground">
+        We could not load your profile. Make sure VITE_API_BASE_URL is configured and the API is
+        reachable.
+      </p>
+      <ActionButton onClick={onRetry} className="mt-6 py-2 font-medium transition">
+        Retry
+      </ActionButton>
+    </div>
+  );
 }
 
 export function DashboardPage() {
-  const user = useQuery(buildQueryOptions(["current-user"], getCurrentUser));
-  const projects = useQuery(buildQueryOptions(["recent-projects"], getRecentProjects));
-  const queue = useQuery(buildQueryOptions(["render-queue"], getRenderQueue));
-  const usage = useQuery(buildQueryOptions(["ai-usage"], getAiUsage));
-  const storage = useQuery(buildQueryOptions(["storage"], getStorage));
+  const { user, projects, queue, usage, storage, all } = useDashboardData();
 
-  const queries = [user, projects, queue, usage, storage];
+  useDashboardNotifications(all);
 
-  useEffect(() => {
-    const allSettled = queries.every((q) => !q.isLoading);
-    const anyError = queries.some((q) => q.isError);
-    const allSuccess = queries.every((q) => q.isSuccess);
-
-    if (allSettled && allSuccess) {
-      toast.success("Dashboard refreshed", { description: "All data is up to date." });
-    } else if (allSettled && anyError) {
-      toast.error("Dashboard update failed", {
-        description: "Some dashboard data could not be loaded. Try retrying.",
-      });
-    }
-  }, [user.isSuccess, projects.isSuccess, queue.isSuccess, usage.isSuccess, storage.isSuccess]);
-
-  if (user.isLoading && !user.data) {
-    return (
-      <div className="min-h-screen space-y-4 bg-background p-6">
-        <Skeleton className="h-16" />
-        <Skeleton className="h-48" />
-        <Skeleton className="h-72" />
-      </div>
-    );
-  }
-
-  if (user.isError) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Dashboard unavailable</h1>
-        <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          We could not load your profile. Make sure VITE_API_BASE_URL is configured and the API is
-          reachable.
-        </p>
-        <button
-          type="button"
-          onClick={() => user.refetch()}
-          className="mt-6 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
+  if (user.isLoading && !user.data) return <DashboardBootSkeleton />;
+  if (user.isError) return <DashboardErrorState onRetry={user.refetch} />;
 
   return (
     <DashboardLayout user={user.data}>
@@ -93,13 +54,9 @@ export function DashboardPage() {
               projects={projects.data ?? []}
               isLoading={projects.isLoading}
               error={projects.error}
-              onRetry={() => projects.refetch()}
+              onRetry={projects.refetch}
             />
-            {queue.data ? (
-              <RenderingQueue jobs={queue.data} />
-            ) : (
-              <Skeleton className="h-80" />
-            )}
+            {queue.data ? <RenderingQueue jobs={queue.data} /> : <Skeleton className="h-80" />}
           </div>
 
           <div className="space-y-5">
