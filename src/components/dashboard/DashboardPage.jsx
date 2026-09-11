@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 import { AiUsageCard } from "@/components/dashboard/AiUsageCard";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
@@ -19,14 +21,39 @@ function Skeleton({ className = "" }) {
   return <div className={`animate-pulse rounded-2xl bg-muted ${className}`} />;
 }
 
-export function DashboardPage() {
-  const user = useQuery({ queryKey: ["current-user"], queryFn: getCurrentUser });
-  const projects = useQuery({ queryKey: ["recent-projects"], queryFn: getRecentProjects });
-  const queue = useQuery({ queryKey: ["render-queue"], queryFn: getRenderQueue });
-  const usage = useQuery({ queryKey: ["ai-usage"], queryFn: getAiUsage });
-  const storage = useQuery({ queryKey: ["storage"], queryFn: getStorage });
+function buildQueryOptions(queryKey, queryFn) {
+  return {
+    queryKey,
+    queryFn,
+    retry: 2,
+    retryDelay: (attempt) => Math.min(attempt * 1_000, 3_000),
+  };
+}
 
-  if (!user.data) {
+export function DashboardPage() {
+  const user = useQuery(buildQueryOptions(["current-user"], getCurrentUser));
+  const projects = useQuery(buildQueryOptions(["recent-projects"], getRecentProjects));
+  const queue = useQuery(buildQueryOptions(["render-queue"], getRenderQueue));
+  const usage = useQuery(buildQueryOptions(["ai-usage"], getAiUsage));
+  const storage = useQuery(buildQueryOptions(["storage"], getStorage));
+
+  const queries = [user, projects, queue, usage, storage];
+
+  useEffect(() => {
+    const allSettled = queries.every((q) => !q.isLoading);
+    const anyError = queries.some((q) => q.isError);
+    const allSuccess = queries.every((q) => q.isSuccess);
+
+    if (allSettled && allSuccess) {
+      toast.success("Dashboard refreshed", { description: "All data is up to date." });
+    } else if (allSettled && anyError) {
+      toast.error("Dashboard update failed", {
+        description: "Some dashboard data could not be loaded. Try retrying.",
+      });
+    }
+  }, [user.isSuccess, projects.isSuccess, queue.isSuccess, usage.isSuccess, storage.isSuccess]);
+
+  if (user.isLoading && !user.data) {
     return (
       <div className="min-h-screen space-y-4 bg-background p-6">
         <Skeleton className="h-16" />
@@ -49,7 +76,11 @@ export function DashboardPage() {
               error={projects.error}
               onRetry={() => projects.refetch()}
             />
-            {queue.data ? <RenderingQueue jobs={queue.data} /> : <Skeleton className="h-80" />}
+            {queue.data ? (
+              <RenderingQueue jobs={queue.data} />
+            ) : (
+              <Skeleton className="h-80" />
+            )}
           </div>
 
           <div className="space-y-5">
