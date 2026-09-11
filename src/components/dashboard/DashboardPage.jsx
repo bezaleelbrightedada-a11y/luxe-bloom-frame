@@ -63,6 +63,25 @@ export function DashboardPage() {
     );
   }
 
+  if (user.isError) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6 text-center">
+        <h1 className="text-2xl font-semibold text-foreground">Dashboard unavailable</h1>
+        <p className="mt-2 max-w-md text-sm text-muted-foreground">
+          We could not load your profile. Make sure VITE_API_BASE_URL is configured and the API is
+          reachable.
+        </p>
+        <button
+          type="button"
+          onClick={() => user.refetch()}
+          className="mt-6 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <DashboardLayout user={user.data}>
       <div className="mx-auto w-full max-w-[1400px] space-y-5">
