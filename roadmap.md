@@ -6,4 +6,6 @@
 - Senior-level refactor: shared utils/constants/hooks, smaller components, accessibility and cleanup
 
 ## Next Up
+- Multi-page navigation (Dashboard, Projects, Render queue, Asset library, AI Studio, Settings) — done
 - (waiting for next feature spec)
+

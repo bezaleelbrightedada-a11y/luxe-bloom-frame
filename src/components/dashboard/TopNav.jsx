@@ -1,6 +1,8 @@
 import { Bell, Menu, Plus, Search } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import { ActionButton } from "@/components/common/ActionButton";
+
 
 /**
  * Sticky application header: mobile menu, search, and account controls.
@@ -49,12 +51,15 @@ export function TopNav({
 
         <div className="ml-auto flex items-center gap-2">
           <ActionButton
+            as={Link}
+            to="/ai-studio"
             onClick={onNewProject}
             className="hidden gap-2 px-3.5 py-2 sm:inline-flex"
           >
             <Plus className="size-4" />
             New project
           </ActionButton>
+
 
           <button
             type="button"

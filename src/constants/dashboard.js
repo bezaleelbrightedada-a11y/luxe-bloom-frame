@@ -8,7 +8,6 @@ import {
   FolderPlus,
   LayoutDashboard,
   Layers,
-  LifeBuoy,
   Sparkles,
   Upload,
   Wand2,
@@ -21,42 +20,57 @@ export const DASHBOARD_QUERY_KEYS = {
   queue: ["render-queue"],
   usage: ["ai-usage"],
   storage: ["storage"],
+  assets: ["assets"],
+  presenters: ["presenters"],
+  voices: ["voices"],
+  settings: ["settings"],
 };
 
-/** Sidebar navigation model. `to` is reserved for future router links. */
+/** Sidebar navigation model. `to` maps to a real application route. */
 export const NAV_SECTIONS = [
   {
     label: "Workspace",
     items: [
-      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
-      { id: "projects", label: "Projects", icon: Layers },
-      { id: "renders", label: "Render queue", icon: Clapperboard, badge: "2" },
-      { id: "assets", label: "Asset library", icon: Boxes },
+      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, to: "/" },
+      { id: "projects", label: "Projects", icon: Layers, to: "/projects" },
+      { id: "renders", label: "Render queue", icon: Clapperboard, to: "/renders" },
+      { id: "assets", label: "Asset library", icon: Boxes, to: "/assets" },
     ],
   },
   {
     label: "Intelligence",
     items: [
-      { id: "ai", label: "AI studio", icon: Sparkles },
-      { id: "settings", label: "Settings", icon: Cog },
-      { id: "support", label: "Support", icon: LifeBuoy },
+      { id: "ai", label: "AI studio", icon: Sparkles, to: "/ai-studio" },
+      { id: "settings", label: "Settings", icon: Cog, to: "/settings" },
     ],
   },
 ];
 
-/** Quick action tiles. Handled by the `onAction` callback of QuickActions. */
+/** Quick action tiles. Each one navigates to the relevant workspace area. */
 export const QUICK_ACTIONS = [
-  { id: "new-project", label: "New project", hint: "Start a scene", icon: FolderPlus },
-  { id: "upload", label: "Upload assets", hint: "Models & textures", icon: Upload },
-  { id: "ai-scene", label: "AI scene", hint: "Prompt to render", icon: Sparkles },
-  { id: "enhance", label: "Enhance", hint: "Upscale & denoise", icon: Wand2 },
+  {
+    id: "new-project",
+    label: "New project",
+    hint: "Start a scene",
+    icon: FolderPlus,
+    to: "/projects",
+  },
+  { id: "upload", label: "Upload assets", hint: "Models & textures", icon: Upload, to: "/assets" },
+  {
+    id: "ai-scene",
+    label: "AI studio",
+    hint: "Prompt to render",
+    icon: Sparkles,
+    to: "/ai-studio",
+  },
+  { id: "enhance", label: "Render queue", hint: "Track renders", icon: Wand2, to: "/renders" },
 ];
 
-/** Welcome banner highlight tiles. */
+/** Welcome banner highlight tiles (labels only; values come from the API). */
 export const WELCOME_HIGHLIGHTS = [
-  { id: "active", label: "Active renders", value: "2", icon: Cpu },
-  { id: "frames", label: "Frames today", value: "1,284", icon: Film },
-  { id: "hours", label: "GPU hours left", value: "36.5", icon: Clock },
+  { id: "activeRenders", label: "Active renders", icon: Cpu },
+  { id: "framesToday", label: "Frames today", icon: Film },
+  { id: "gpuHoursLeft", label: "GPU hours left", icon: Clock },
 ];
 
 /** Animation stagger (ms) so section entrance order stays consistent. */

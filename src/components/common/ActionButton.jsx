@@ -16,17 +16,21 @@ const VARIANT_CLASSES = {
  *
  * @param {Object} props
  * @param {('primary'|'ghost'|'outline')} [props.variant='primary']
+ * @param {React.ElementType} [props.as='button'] - Render as a link or other element.
  * @param {string} [props.className] - Extra classes, merged last so they win.
  * @param {React.ReactNode} props.children
  */
-export function ActionButton({ variant = "primary", className, children, ...rest }) {
+export function ActionButton({ variant = "primary", as: Component = "button", className, children, ...rest }) {
+  const typeProp = Component === "button" ? { type: "button" } : {};
+
   return (
-    <button
-      type="button"
+    <Component
+      {...typeProp}
       className={cn("press inline-flex items-center gap-1.5", VARIANT_CLASSES[variant], className)}
       {...rest}
     >
       {children}
-    </button>
+    </Component>
   );
 }
+

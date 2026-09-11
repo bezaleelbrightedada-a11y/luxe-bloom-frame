@@ -1,11 +1,13 @@
+import { Link } from "@tanstack/react-router";
+
 import { Surface, SurfaceHeader } from "@/components/common/Surface";
 import { QUICK_ACTIONS, SECTION_DELAYS } from "@/constants/dashboard";
 
 /**
- * Grid of shortcut tiles.
- * @param {{ actions?: typeof QUICK_ACTIONS, onAction?: (id: string) => void }} props
+ * Grid of shortcut tiles linking to the main areas of the workspace.
+ * @param {{ actions?: typeof QUICK_ACTIONS }} props
  */
-export function QuickActions({ actions = QUICK_ACTIONS, onAction }) {
+export function QuickActions({ actions = QUICK_ACTIONS }) {
   return (
     <Surface delay={SECTION_DELAYS.quickActions}>
       <SurfaceHeader title="Quick actions" subtitle="Jump straight into the work" />
@@ -13,10 +15,9 @@ export function QuickActions({ actions = QUICK_ACTIONS, onAction }) {
         {actions.map((action, index) => {
           const Icon = action.icon;
           return (
-            <button
+            <Link
               key={action.id}
-              type="button"
-              onClick={() => onAction?.(action.id)}
+              to={action.to}
               style={{ animationDelay: `${index * 60}ms` }}
               className="animate-rise press group flex flex-col items-start gap-2 rounded-xl border border-border/70 bg-muted/40 p-3.5 text-left hover:border-primary/30 hover:bg-primary/5"
             >
@@ -25,7 +26,7 @@ export function QuickActions({ actions = QUICK_ACTIONS, onAction }) {
               </span>
               <span className="text-sm font-semibold tracking-tight">{action.label}</span>
               <span className="text-xs text-muted-foreground">{action.hint}</span>
-            </button>
+            </Link>
           );
         })}
       </div>
