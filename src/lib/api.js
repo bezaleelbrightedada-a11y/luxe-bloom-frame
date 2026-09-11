@@ -44,8 +44,6 @@ apiClient.interceptors.response.use(
  */
 export function requireApiConfig() {
   if (!baseURL) {
-    throw new Error(
-      "API_BASE_URL is not configured. Set VITE_API_BASE_URL in your environment to connect to a real API.",
-    );
+    throw new Error("No data source is connected yet, so there is nothing to show here.");
   }
 }
