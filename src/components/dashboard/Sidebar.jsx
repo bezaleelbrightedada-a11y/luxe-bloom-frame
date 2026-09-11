@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { Link } from "@tanstack/react-router";
 import { Sparkles, X } from "lucide-react";
 
 import { ActionButton } from "@/components/common/ActionButton";
@@ -9,25 +10,20 @@ const NavItem = memo(function NavItem({ item, onSelect }) {
   const Icon = item.icon;
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelect?.(item.id)}
-      aria-current={item.active ? "page" : undefined}
-      className={cn(
-        "press group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
-        item.active
-          ? "bg-primary/10 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_18%,transparent)]"
-          : "text-muted-foreground hover:bg-accent hover:text-foreground",
-      )}
+    <Link
+      to={item.to}
+      onClick={onSelect}
+      activeOptions={{ exact: item.to === "/" }}
+      className="press group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+      activeProps={{
+        "aria-current": "page",
+        className:
+          "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_18%,transparent)]",
+      }}
     >
       <Icon className="size-[18px] shrink-0" />
       <span className="truncate">{item.label}</span>
-      {item.badge ? (
-        <span className="ml-auto rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
-          {item.badge}
-        </span>
-      ) : null}
-    </button>
+    </Link>
   );
 });
 
@@ -35,7 +31,7 @@ function SidebarContent({ onClose, onNavigate }) {
   return (
     <div className="flex h-full flex-col gap-6 px-4 py-5">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <Link to="/" onClick={onNavigate} className="flex items-center gap-2.5">
           <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
             <Sparkles className="size-[18px]" />
           </span>
@@ -43,7 +39,7 @@ function SidebarContent({ onClose, onNavigate }) {
             <p className="text-sm font-semibold tracking-tight">RenderFlow</p>
             <p className="text-xs text-muted-foreground">Studio Pro</p>
           </div>
-        </div>
+        </Link>
         <button
           type="button"
           onClick={onClose}
@@ -72,8 +68,10 @@ function SidebarContent({ onClose, onNavigate }) {
         <p className="mt-1 text-xs text-muted-foreground">
           Scale rendering capacity instantly for deadline weeks.
         </p>
-        <ActionButton className="mt-3 w-full justify-center rounded-lg px-3 py-2 text-xs">
-          Upgrade plan
+        <ActionButton asChild className="mt-3 w-full justify-center rounded-lg px-3 py-2 text-xs">
+          <Link to="/settings" onClick={onNavigate}>
+            Upgrade plan
+          </Link>
         </ActionButton>
       </div>
     </div>
@@ -83,9 +81,9 @@ function SidebarContent({ onClose, onNavigate }) {
 /**
  * Responsive navigation: static rail on desktop, overlay drawer on mobile.
  *
- * @param {{ open: boolean, onClose: () => void, onNavigate?: (id: string) => void }} props
+ * @param {{ open: boolean, onClose: () => void }} props
  */
-export function Sidebar({ open, onClose, onNavigate }) {
+export function Sidebar({ open, onClose }) {
   return (
     <>
       <aside
@@ -93,7 +91,7 @@ export function Sidebar({ open, onClose, onNavigate }) {
         className="hidden w-[268px] shrink-0 border-r border-border/70 bg-sidebar lg:block"
       >
         <div className="sticky top-0 h-screen">
-          <SidebarContent onNavigate={onNavigate} />
+          <SidebarContent />
         </div>
       </aside>
 
@@ -116,7 +114,7 @@ export function Sidebar({ open, onClose, onNavigate }) {
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <SidebarContent onClose={onClose} onNavigate={onNavigate} />
+        <SidebarContent onClose={onClose} onNavigate={onClose} />
       </aside>
     </>
   );
