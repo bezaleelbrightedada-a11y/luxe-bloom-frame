@@ -142,3 +142,88 @@
     color: var(--color-foreground);
   }
 }
+
+/* ---- Studio design system overrides (Apple-inspired) ---- */
+:root {
+  --background: oklch(0.972 0.003 264);
+  --foreground: oklch(0.18 0.02 265);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 265);
+  --primary: oklch(0.58 0.19 265);
+  --primary-foreground: oklch(0.99 0.003 248);
+  --muted: oklch(0.955 0.005 264);
+  --muted-foreground: oklch(0.55 0.02 265);
+  --accent: oklch(0.94 0.02 265);
+  --accent-foreground: oklch(0.25 0.04 265);
+  --border: oklch(0.9 0.006 264);
+  --ring: oklch(0.58 0.19 265);
+  --sidebar: oklch(0.99 0.002 264);
+  --radius: 0.9rem;
+}
+
+.dark {
+  --background: oklch(0.16 0.015 265);
+  --card: oklch(0.21 0.02 265);
+  --sidebar: oklch(0.19 0.02 265);
+  --primary: oklch(0.68 0.17 265);
+  --primary-foreground: oklch(0.15 0.02 265);
+}
+
+@theme inline {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+@keyframes studio-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes studio-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@utility animate-rise {
+  animation: studio-rise 0.6s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@utility press {
+  transition:
+    transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    background-color 0.25s ease;
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.975);
+  }
+}
+
+@utility shimmer {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, white 45%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: studio-shimmer 2.2s linear infinite;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
