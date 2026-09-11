@@ -66,6 +66,15 @@ export function TopNav({
 
           <button
             type="button"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            className="press grid size-9 place-items-center rounded-xl border border-border/70 bg-card"
+          >
+            {theme === "dark" ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
+          </button>
+
+          <button
+            type="button"
             onClick={onOpenNotifications}
             aria-label="Notifications"
             className="press relative grid size-9 place-items-center rounded-xl border border-border/70 bg-card"
