@@ -4,14 +4,13 @@ import { cn } from "@/lib/utils";
  * Base card surface used across the dashboard.
  * `delay` staggers the entrance animation (ms).
  */
-export function Surface({ className, children, delay = 0, interactive = false, ...rest }) {
+export function Surface({ className, children, delay = 0, ...rest }) {
   return (
     <div
       style={{ animationDelay: `${delay}ms` }}
       className={cn(
         "animate-rise rounded-2xl border border-border/70 bg-card text-card-foreground",
         "shadow-[0_1px_2px_rgba(16,24,40,0.04),0_12px_32px_-18px_rgba(16,24,40,0.35)]",
-        interactive && "press hover:shadow-[0_18px_40px_-20px_rgba(16,24,40,0.45)]",
         className,
       )}
       {...rest}
