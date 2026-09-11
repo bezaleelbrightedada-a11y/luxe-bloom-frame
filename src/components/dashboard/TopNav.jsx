@@ -14,17 +14,9 @@ import { useTheme } from "@/hooks/useTheme";
  * @param {() => void} props.onOpenSidebar
  * @param {(term: string) => void} [props.onSearch]
  * @param {() => void} [props.onNewProject]
- * @param {() => void} [props.onOpenNotifications]
  * @param {() => void} [props.onOpenProfile]
  */
-export function TopNav({
-  user,
-  onOpenSidebar,
-  onSearch,
-  onNewProject,
-  onOpenNotifications,
-  onOpenProfile,
-}) {
+export function TopNav({ user, onOpenSidebar, onSearch, onNewProject, onOpenProfile }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
