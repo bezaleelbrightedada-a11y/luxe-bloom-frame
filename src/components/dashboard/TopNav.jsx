@@ -1,7 +1,8 @@
-import { Bell, Menu, Plus, Search } from "lucide-react";
+import { Bell, Menu, Moon, Plus, Search, Sun } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { ActionButton } from "@/components/common/ActionButton";
+import { useTheme } from "@/hooks/useTheme";
 
 
 /**
@@ -23,6 +24,8 @@ export function TopNav({
   onOpenNotifications,
   onOpenProfile,
 }) {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/75 backdrop-blur-xl">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
@@ -60,6 +63,15 @@ export function TopNav({
             New project
           </ActionButton>
 
+
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            className="press grid size-9 place-items-center rounded-xl border border-border/70 bg-card"
+          >
+            {theme === "dark" ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
+          </button>
 
           <button
             type="button"
