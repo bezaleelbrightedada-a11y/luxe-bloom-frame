@@ -2,7 +2,6 @@ import { AlertCircle, Inbox } from "lucide-react";
 
 import { ActionButton } from "@/components/common/ActionButton";
 import { cn } from "@/lib/utils";
-import { alignClass } from "@/utils/table";
 
 const STATE_BUTTON_CLASS = "rounded-lg px-3 py-2 font-medium hover:bg-primary/90 mt-4";
 
@@ -78,7 +77,6 @@ export function SkeletonRow({ columns }) {
               "h-4 w-3/4 rounded-md bg-muted shimmer",
               column.align === "right" && "ml-auto",
               column.align === "center" && "mx-auto",
-              alignClass(column.align) === "text-center" && "mx-auto",
             )}
           />
         </td>
